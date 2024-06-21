@@ -1,0 +1,4 @@
+Run the code
+both frontend and backedn
+
+npm run dev
