@@ -37,7 +37,7 @@ const Header = () => {
         <Container>
           <LinkContainer to='/'>
             <Navbar.Brand>
-              <img src={logo} alt='ProShop' />
+              {/* <img src={logo} alt='ProShop' /> */}
               Agricopia
             </Navbar.Brand>
           </LinkContainer>
@@ -53,6 +53,11 @@ const Header = () => {
                       {cartItems.reduce((a, c) => a + c.qty, 0)}
                     </Badge>
                   )}
+                </Nav.Link>
+              </LinkContainer>
+              <LinkContainer to='/'>
+                <Nav.Link>
+                  Crops
                 </Nav.Link>
               </LinkContainer>
               <LinkContainer to='/allfertilizers'>

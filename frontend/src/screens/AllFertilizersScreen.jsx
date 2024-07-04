@@ -10,8 +10,6 @@ import Paginate from '../components/Paginate';
 const AllFertilizers = () => {
   const { pageNumber, keyword } = useParams();
 
-
-
   const {
     data: fertilizersData,
     isLoading: fertilizersLoading,
