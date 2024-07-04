@@ -18,8 +18,6 @@ const AllPriceScreen = () => {
     pageNumber,
   });
 
-  console.log('Price Data:', priceData);
-
   return (
     <>
       {/* Market Price Section */}

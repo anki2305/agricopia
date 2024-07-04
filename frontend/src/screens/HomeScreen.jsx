@@ -43,8 +43,6 @@ const HomeScreen = () => {
     pageNumber,
   });
 
-  console.log('Price Data:', priceData);
-
   return (
     <>
       {!keyword ? (
