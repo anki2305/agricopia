@@ -55,6 +55,16 @@ const Header = () => {
                   )}
                 </Nav.Link>
               </LinkContainer>
+              <LinkContainer to='/allfertilizers'>
+                <Nav.Link>
+                  Fertilizers
+                </Nav.Link>
+              </LinkContainer>
+              <LinkContainer to='/allprices'>
+                <Nav.Link>
+                  Market Price
+                </Nav.Link>
+              </LinkContainer>
               {userInfo ? (
                 <>
                   <NavDropdown title={userInfo.name} id='username'>

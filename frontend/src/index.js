@@ -16,6 +16,8 @@ import PrivateRoute from './components/PrivateRoute';
 import AdminRoute from './components/AdminRoute';
 import HomeScreen from './screens/HomeScreen';
 import ProductScreen from './screens/ProductScreen';
+import FertilizerScreen from './screens/FertilizerScreen';
+import PriceScreen from './screens/PriceScreen';
 import CartScreen from './screens/CartScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
@@ -33,6 +35,9 @@ import PriceListScreen  from './screens/admin/PriceListScreen';
 import PriceEditScreen  from './screens/admin/PriceEditScreen';
 import UserListScreen from './screens/admin/UserListScreen';
 import UserEditScreen from './screens/admin/UserEditScreen';
+import AllFertilizers from './screens/AllFertilizersScreen';
+import AllPriceScreen from './screens/AllPriceListScreen'
+
 import store from './store';
 import { Provider } from 'react-redux';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
@@ -47,7 +52,13 @@ const router = createBrowserRouter(
         path='/search/:keyword/page/:pageNumber'
         element={<HomeScreen />}
       />
+      <Route path='/allfertilizers' element={<AllFertilizers />} />
+      <Route path='/allprices' element={<AllPriceScreen />} />
+
+      
       <Route path='/product/:id' element={<ProductScreen />} />
+      <Route path='/fertilizer/:id' element={<FertilizerScreen />} />
+      <Route path='/pricelist/:id' element={<PriceScreen />} />
       <Route path='/cart' element={<CartScreen />} />
       <Route path='/login' element={<LoginScreen />} />
       <Route path='/register' element={<RegisterScreen />} />
