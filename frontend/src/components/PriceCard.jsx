@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 
 const PriceCard = ({ pricelist }) => {
   console.log(pricelist);
-
+  
   if (!pricelist) {
     return <Card className='my-3 p-3 rounded'>No price data available</Card>;
   }
-
+  
   return (
     <Card className='my-3 p-3 rounded'>
       {pricelist._id && (
@@ -23,8 +23,23 @@ const PriceCard = ({ pricelist }) => {
               <strong>{pricelist.name || 'Unnamed Product'}</strong>
             </Card.Title>
           </Link>
-        )}
-      </Card.Body>
+      )}       
+        <Card.Text 
+        as='h3' 
+        style={{
+          fontSize: '2.2rem',
+          fontWeight: 'bold',
+          color: '#1e88e5',
+          margin: '15px 0',
+          textAlign: 'center',
+          display: 'inline-block',
+          animation: 'priceRotate 3s ease-in-out infinite',
+        }}
+>
+  ₹{pricelist.price}
+</Card.Text>   
+ </Card.Body>
+
     </Card>
   );
 };

@@ -89,7 +89,7 @@ const PriceListScreen = () => {
                     <td>{priceList._id}</td>
                     <td>{priceList.name}</td>
                     <td>{priceList.description}</td>
-                    <td>Rs.{priceList.price}</td>
+                    <td>₹{priceList.price}</td>
                     <td>
                       <LinkContainer to={`/admin/price/${priceList._id}/edit`}>
                         <Button variant='light' className='btn-sm mx-2'>

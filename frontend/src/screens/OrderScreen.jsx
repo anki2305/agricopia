@@ -50,7 +50,7 @@ const OrderScreen = () => {
         });
         paypalDispatch({ type: 'setLoadingStatus', value: 'pending' });
       };
-      if (order && !order.isPaid) {
+      if (order && !order.isPaid && order.paymentMethod !== 'CashOnDelivery') {
         if (!window.paypal) {
           loadPaypalScript();
         }
@@ -69,14 +69,6 @@ const OrderScreen = () => {
       }
     });
   }
-
-  // TESTING ONLY! REMOVE BEFORE PRODUCTION
-  // async function onApproveTest() {
-  //   await payOrder({ orderId, details: { payer: {} } });
-  //   refetch();
-
-  //   toast.success('Order is paid');
-  // }
 
   function onError(err) {
     toast.error(err.message);
@@ -101,6 +93,23 @@ const OrderScreen = () => {
     refetch();
   };
 
+  const handleCashOnDelivery = async () => {
+    try {
+      await payOrder({ 
+        orderId, 
+        details: { 
+          payer: {},
+          status: 'COMPLETED',
+          update_time: new Date().toISOString(),
+        } 
+      });
+      refetch();
+      toast.success('Order is confirmed for Cash on Delivery');
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
+    }
+  };
+
   return isLoading ? (
     <Loader />
   ) : error ? (
@@ -121,10 +130,14 @@ const OrderScreen = () => {
                 <a href={`mailto:${order.user.email}`}>{order.user.email}</a>
               </p>
               <p>
-                <strong>Address:</strong>
+                <strong>Address: </strong>
                 {order.shippingAddress.address}, {order.shippingAddress.city}{' '}
                 {order.shippingAddress.postalCode},{' '}
                 {order.shippingAddress.country}
+              </p>
+              <p>
+                <strong>Phone Number: </strong>{' '}
+                {order.shippingAddress.phone}
               </p>
               {order.isDelivered ? (
                 <Message variant='success'>
@@ -142,7 +155,11 @@ const OrderScreen = () => {
                 {order.paymentMethod}
               </p>
               {order.isPaid ? (
-                <Message variant='success'>Paid on {order.paidAt}</Message>
+                <Message variant='success'>
+                  {order.paymentMethod === 'CashOnDelivery' 
+                    ? 'Confirmed for Cash on Delivery' 
+                    : `Paid on ${order.paidAt}`}
+                </Message>
               ) : (
                 <Message variant='danger'>Not Paid</Message>
               )}
@@ -201,17 +218,11 @@ const OrderScreen = () => {
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
-                  <Col>Tax</Col>
-                  <Col>₹{order.taxPrice}</Col>
-                </Row>
-              </ListGroup.Item>
-              <ListGroup.Item>
-                <Row>
                   <Col>Total</Col>
                   <Col>₹{order.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
-              {!order.isPaid && (
+              {!order.isPaid && order.paymentMethod !== 'CashOnDelivery' && (
                 <ListGroup.Item>
                   {loadingPay && <Loader />}
 
@@ -219,23 +230,25 @@ const OrderScreen = () => {
                     <Loader />
                   ) : (
                     <div>
-                      {/* THIS BUTTON IS FOR TESTING! REMOVE BEFORE PRODUCTION! */}
-                      {/* <Button
-                        style={{ marginBottom: '10px' }}
-                        onClick={onApproveTest}
-                      >
-                        Test Pay Order
-                      </Button> */}
-
-                      <div>
-                        <PayPalButtons
-                          createOrder={createOrder}
-                          onApprove={onApprove}
-                          onError={onError}
-                        ></PayPalButtons>
-                      </div>
+                      <PayPalButtons
+                        createOrder={createOrder}
+                        onApprove={onApprove}
+                        onError={onError}
+                      ></PayPalButtons>
                     </div>
                   )}
+                </ListGroup.Item>
+              )}
+
+              {!order.isPaid && order.paymentMethod === 'CashOnDelivery' && (
+                <ListGroup.Item>
+                  <Button
+                    type='button'
+                    className='btn btn-block'
+                    onClick={handleCashOnDelivery}
+                  >
+                    Confirm Cash on Delivery
+                  </Button>
                 </ListGroup.Item>
               )}
 

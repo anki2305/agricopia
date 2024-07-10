@@ -11,6 +11,8 @@ const ShippingScreen = () => {
   const { shippingAddress } = cart;
 
   const [address, setAddress] = useState(shippingAddress.address || '');
+  const [phone, setPhone] = useState(shippingAddress.phone || '');
+
   const [city, setCity] = useState(shippingAddress.city || '');
   const [postalCode, setPostalCode] = useState(
     shippingAddress.postalCode || ''
@@ -22,7 +24,9 @@ const ShippingScreen = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    dispatch(saveShippingAddress({ address, city, postalCode, country }));
+    dispatch(
+      saveShippingAddress({ address, city, postalCode, country, phone })
+    );
     navigate('/payment');
   };
 
@@ -42,6 +46,28 @@ const ShippingScreen = () => {
           ></Form.Control>
         </Form.Group>
 
+        <Form.Group className='my-2' controlId='phone'>
+          <Form.Label>Mobile Number</Form.Label>
+          <Form.Control
+            type='tel'
+            placeholder='Enter Phone Number'
+            value={phone}
+            required
+            onChange={(e) => {
+              const input = e.target.value.replace(/\D/g, '');
+              if (input.length <= 10) {
+                setPhone(input);
+              }
+            }}
+            pattern='[0-9]{10}'
+            maxLength='10'
+          ></Form.Control>
+          {phone.length > 0 && phone.length < 10 && (
+            <Form.Text className='text-danger'>
+              Phone number must be 10 digits long
+            </Form.Text>
+          )}
+        </Form.Group>
         <Form.Group className='my-2' controlId='city'>
           <Form.Label>City</Form.Label>
           <Form.Control

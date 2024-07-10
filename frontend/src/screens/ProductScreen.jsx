@@ -44,6 +44,8 @@ const ProductScreen = () => {
     error,
   } = useGetProductDetailsQuery(productId);
 
+  console.log(product);
+
   const { userInfo } = useSelector((state) => state.auth);
 
   const [createReview, { isLoading: loadingProductReview }] =
@@ -95,6 +97,12 @@ const ProductScreen = () => {
                   />
                 </ListGroup.Item>
                 <ListGroup.Item>Price: ₹{product.price}</ListGroup.Item>
+                <ListGroup.Item>
+                  Category: {product.category}
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  Planting Season: {product.brand}
+                </ListGroup.Item>
                 <ListGroup.Item>
                   Description: {product.description}
                 </ListGroup.Item>

@@ -133,7 +133,7 @@ const ProductEditScreen = () => {
             </Form.Group>
 
             <Form.Group controlId='brand'>
-              <Form.Label>Brand</Form.Label>
+             <Form.Label>Planting Season </Form.Label>
               <Form.Control
                 type='text'
                 placeholder='Enter brand'

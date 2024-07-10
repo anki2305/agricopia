@@ -51,6 +51,9 @@ console.log('price screen');
                   <h3>{priceData.name}</h3>
                 </ListGroup.Item>
                 <ListGroup.Item>
+                  price: ₹{priceData.price}
+                </ListGroup.Item>
+                <ListGroup.Item>
                   Description: {priceData.description}
                 </ListGroup.Item>
               </ListGroup>

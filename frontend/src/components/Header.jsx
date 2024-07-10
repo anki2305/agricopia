@@ -22,7 +22,7 @@ const Header = () => {
     try {
       await logoutApiCall().unwrap();
       dispatch(logout());
-      // NOTE: here we need to reset cart state for when a user logs out so the next
+      // NOTE: need to reset cart state for when a user logs out so the next
       // user doesn't inherit the previous users cart and shipping
       dispatch(resetCart());
       navigate('/login');
@@ -37,7 +37,7 @@ const Header = () => {
         <Container>
           <LinkContainer to='/'>
             <Navbar.Brand>
-              {/* <img src={logo} alt='ProShop' /> */}
+              {/* <img src={logo} alt='' /> */}
               Agricopia
             </Navbar.Brand>
           </LinkContainer>
@@ -91,7 +91,7 @@ const Header = () => {
 
               {/* Admin Links */}
               {userInfo && userInfo.isAdmin && (
-                <NavDropdown title='Admin' id='adminmenu'>
+                <NavDropdown title='Menu' id='adminmenu'>
                   <LinkContainer to='/admin/productlist'>
                     <NavDropdown.Item>Market Demanded Crops</NavDropdown.Item>
                   </LinkContainer>

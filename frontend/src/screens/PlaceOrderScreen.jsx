@@ -33,8 +33,7 @@ const PlaceOrderScreen = () => {
         paymentMethod: cart.paymentMethod,
         itemsPrice: cart.itemsPrice,
         shippingPrice: cart.shippingPrice,
-        taxPrice: cart.taxPrice,
-        totalPrice: cart.totalPrice,
+        totalPrice: cart.totalPrice
       }).unwrap();
       dispatch(clearCartItems());
       navigate(`/order/${res._id}`);
@@ -52,10 +51,14 @@ const PlaceOrderScreen = () => {
             <ListGroup.Item>
               <h2>Shipping</h2>
               <p>
-                <strong>Address:</strong>
+                <strong>Address: </strong>
                 {cart.shippingAddress.address}, {cart.shippingAddress.city}{' '}
                 {cart.shippingAddress.postalCode},{' '}
                 {cart.shippingAddress.country}
+              </p>
+              <p>
+              <strong>Phone Number: </strong>
+              {cart.shippingAddress.phone}
               </p>
             </ListGroup.Item>
 
@@ -115,12 +118,6 @@ const PlaceOrderScreen = () => {
                 <Row>
                   <Col>Shipping</Col>
                   <Col>₹{cart.shippingPrice}</Col>
-                </Row>
-              </ListGroup.Item>
-              <ListGroup.Item>
-                <Row>
-                  <Col>Tax</Col>
-                  <Col>₹{cart.taxPrice}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>

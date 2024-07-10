@@ -16,19 +16,16 @@ export function calcPrices(orderItems) {
   );
 
   // Calculate the shipping price
-  const shippingPrice = itemsPrice > 100 ? 0 : 10;
+  const shippingPrice = itemsPrice >= 500 ? 0 : 40;
 
-  // Calculate the tax price
-  const taxPrice = 0.15 * itemsPrice;
 
   // Calculate the total price
-  const totalPrice = itemsPrice + shippingPrice + taxPrice;
+  const totalPrice = itemsPrice + shippingPrice ;
 
   // return prices as strings fixed to 2 decimal places
   return {
     itemsPrice: addDecimals(itemsPrice),
     shippingPrice: addDecimals(shippingPrice),
-    taxPrice: addDecimals(taxPrice),
     totalPrice: addDecimals(totalPrice),
   };
 }
