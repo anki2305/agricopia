@@ -1,7 +1,7 @@
 import { apiSlice } from './apiSlice';
-import { ORDERS_URL, PAYPAL_URL } from '../constants';
+import { ORDERS_URL, PAYTM_URL } from '../constants';
 
-export const orderApiSlice = apiSlice.injectEndpoints({
+export const ordersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     createOrder: builder.mutation({
       query: (order) => ({
@@ -25,7 +25,7 @@ export const orderApiSlice = apiSlice.injectEndpoints({
     }),
     getPaypalClientId: builder.query({
       query: () => ({
-        url: PAYPAL_URL,
+        url: ORDERS_URL + '/config/paypal',
       }),
       keepUnusedDataFor: 5,
     }),
@@ -47,6 +47,21 @@ export const orderApiSlice = apiSlice.injectEndpoints({
         method: 'PUT',
       }),
     }),
+    // New endpoints for Paytm integration
+    initiatePaytmPayment: builder.mutation({
+      query: (orderData) => ({
+        url: `${PAYTM_URL}/initiate`,
+        method: 'POST',
+        body: orderData,
+      }),
+    }),
+    verifyPaytmPayment: builder.mutation({
+      query: (paymentData) => ({
+        url: `${PAYTM_URL}/verify`,
+        method: 'POST',
+        body: paymentData,
+      }),
+    }),
   }),
 });
 
@@ -58,4 +73,6 @@ export const {
   useGetMyOrdersQuery,
   useGetOrdersQuery,
   useDeliverOrderMutation,
-} = orderApiSlice;
+  useInitiatePaytmPaymentMutation,
+  useVerifyPaytmPaymentMutation,
+} = ordersApiSlice;
