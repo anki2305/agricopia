@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Row, Col, ListGroup, Image, Card, Button } from 'react-bootstrap';
+import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import Message from '../components/Message';
@@ -8,11 +9,12 @@ import Loader from '../components/Loader';
 import {
   useDeliverOrderMutation,
   useGetOrderDetailsQuery,
+  useGetPaypalClientIdQuery,
+  usePayOrderMutation,
 } from '../slices/ordersApiSlice';
 
 const OrderScreen = () => {
   const { id: orderId } = useParams();
-  const [isPaid, setIsPaid] = useState(false);
 
   const {
     data: order,
@@ -21,18 +23,74 @@ const OrderScreen = () => {
     error,
   } = useGetOrderDetailsQuery(orderId);
 
-  const [deliverOrder, { isLoading: loadingDeliver }] = useDeliverOrderMutation();
+  const [payOrder, { isLoading: loadingPay }] = usePayOrderMutation();
+
+  const [deliverOrder, { isLoading: loadingDeliver }] =
+    useDeliverOrderMutation();
 
   const { userInfo } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    if (order) {
-      setIsPaid(order.isPaid);
-    }
-  }, [order]);
+  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
 
-  const handleUPIPayment = () => {
-    toast.info('UPI Payment Coming Soon!');
+  const {
+    data: paypal,
+    isLoading: loadingPayPal,
+    error: errorPayPal,
+  } = useGetPaypalClientIdQuery();
+
+  useEffect(() => {
+    if (!errorPayPal && !loadingPayPal && paypal.clientId) {
+      const loadPaypalScript = async () => {
+        paypalDispatch({
+          type: 'resetOptions',
+          value: {
+            'client-id': paypal.clientId,
+            currency: 'USD',
+          },
+        });
+        paypalDispatch({ type: 'setLoadingStatus', value: 'pending' });
+      };
+      if (order && !order.isPaid && order.paymentMethod !== 'CashOnDelivery') {
+        if (!window.paypal) {
+          loadPaypalScript();
+        }
+      }
+    }
+  }, [errorPayPal, loadingPayPal, order, paypal, paypalDispatch]);
+
+  function onApprove(data, actions) {
+    return actions.order.capture().then(async function (details) {
+      try {
+        await payOrder({ orderId, details });
+        refetch();
+        toast.success('Order is paid');
+      } catch (err) {
+        toast.error(err?.data?.message || err.error);
+      }
+    });
+  }
+
+  function onError(err) {
+    toast.error(err.message);
+  }
+
+  function createOrder(data, actions) {
+    return actions.order
+      .create({
+        purchase_units: [
+          {
+            amount: { value: order.totalPrice },
+          },
+        ],
+      })
+      .then((orderID) => {
+        return orderID;
+      });
+  }
+
+  const deliverHandler = async () => {
+    await deliverOrder(orderId);
+    refetch();
   };
 
   const handleCashOnDelivery = async () => {
@@ -52,20 +110,11 @@ const OrderScreen = () => {
     }
   };
 
-  const deliverHandler = async () => {
-    try {
-      await deliverOrder(orderId);
-      refetch();
-      toast.success('Order marked as delivered');
-    } catch (err) {
-      toast.error(err?.data?.message || err.error);
-    }
-  };
-
-  if (isLoading) return <Loader />;
-  if (error) return <Message variant='danger'>{error}</Message>;
-
-  return (
+  return isLoading ? (
+    <Loader />
+  ) : error ? (
+    <Message variant='danger'>{error.data.message}</Message>
+  ) : (
     <>
       <h1>Order {order._id}</h1>
       <Row>
@@ -173,18 +222,25 @@ const OrderScreen = () => {
                   <Col>₹{order.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
-              {!isPaid && order.paymentMethod === 'UPI' && (
+              {!order.isPaid && order.paymentMethod !== 'CashOnDelivery' && (
                 <ListGroup.Item>
-                  <Button
-                    type='button'
-                    className='btn btn-block'
-                    onClick={handleUPIPayment}
-                  >
-                    Pay with UPI
-                  </Button>
+                  {loadingPay && <Loader />}
+
+                  {isPending ? (
+                    <Loader />
+                  ) : (
+                    <div>
+                      <PayPalButtons
+                        createOrder={createOrder}
+                        onApprove={onApprove}
+                        onError={onError}
+                      ></PayPalButtons>
+                    </div>
+                  )}
                 </ListGroup.Item>
               )}
-              {!isPaid && order.paymentMethod === 'CashOnDelivery' && (
+
+              {!order.isPaid && order.paymentMethod === 'CashOnDelivery' && (
                 <ListGroup.Item>
                   <Button
                     type='button'
@@ -195,10 +251,12 @@ const OrderScreen = () => {
                   </Button>
                 </ListGroup.Item>
               )}
+
               {loadingDeliver && <Loader />}
+
               {userInfo &&
                 userInfo.isAdmin &&
-                isPaid &&
+                order.isPaid &&
                 !order.isDelivered && (
                   <ListGroup.Item>
                     <Button

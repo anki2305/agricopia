@@ -17,7 +17,7 @@ const PaymentScreen = () => {
     }
   }, [navigate, shippingAddress]);
 
-  const [paymentMethod, setPaymentMethod] = useState('UPI');
+  const [paymentMethod, setPaymentMethod] = useState('CashOnDelivery');
 
   const dispatch = useDispatch();
 
@@ -38,8 +38,9 @@ const PaymentScreen = () => {
             <Form.Check
               className='my-2'
               type='radio'
-              label='UPI'
+              label='UPI (coming soon)'
               id='UPI'
+              disabled= 'true'
               name='paymentMethod'
               value='UPI'
               checked={paymentMethod === 'UPI'}
