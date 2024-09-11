@@ -709,7 +709,7 @@ progress {
   font-size: 0.875em;
   text-transform: uppercase;
 }
-@keyframes priceRotate {
+/* @keyframes priceRotate {
   0% {
     transform: rotate(0deg);
   }
@@ -722,7 +722,7 @@ progress {
   100% {
     transform: rotate(0deg);
   }
-}
+} */
 
 
 .blockquote {
